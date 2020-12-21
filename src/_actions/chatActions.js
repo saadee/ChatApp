@@ -11,3 +11,17 @@ export const ChangeChat = (id) => async (dispatch) => {
       });
   }
 };
+export const setUser = (data) => async (dispatch) => {
+  try {
+    dispatch({
+      type: "SET_USER",
+      payload: data,
+    });
+  } catch (error) {
+    if (error)
+      dispatch({
+        type: "ERROR",
+      });
+  }
+};
+

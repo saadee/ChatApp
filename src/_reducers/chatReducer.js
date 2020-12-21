@@ -1,5 +1,6 @@
 const initialState = {
   roomId: "",
+  user:null
 };
 export default function (state = initialState, action) {
   const { type, payload } = action;
@@ -10,6 +11,12 @@ export default function (state = initialState, action) {
     return {
         ...state,
         roomId: payload,
+    };
+    case "SET_USER": 
+    // console.log(payload);
+    return {
+        ...state,
+        user: payload,
     };
 
     default:
