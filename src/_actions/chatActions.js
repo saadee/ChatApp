@@ -24,4 +24,16 @@ export const setUser = (data) => async (dispatch) => {
       });
   }
 };
-
+export const logOut = () => async (dispatch) => {
+  try {
+    
+    dispatch({
+      type: "SIGN_OUT",
+    });
+  } catch (error) {
+    if (error)
+      dispatch({
+        type: "ERROR",
+      });
+  }
+};

@@ -8,8 +8,10 @@ import InsertEmoticonOutlinedIcon from "@material-ui/icons/InsertEmoticonOutline
 import MicOutlinedIcon from "@material-ui/icons/MicOutlined";
 import { connect } from "react-redux";
 import db from "../firebase";
+import { auth } from "../firebase";
+import { logOut } from "../_actions/chatActions";
 
-function Chat({ ChatRoomId }) {
+function Chat({ ChatRoomId, logOut ,user}) {
   const [seed, setseed] = useState("");
   const [input, setinput] = useState("");
   const [Room, setRoom] = useState("");
@@ -30,6 +32,20 @@ function Chat({ ChatRoomId }) {
     setinput("");
     console.log(input);
   };
+  const SignOut = () => {
+    auth
+      .signOut()
+      .then(function () {
+        logOut();
+        // alert('f');
+        // Sign-out successful.
+
+        console.log("Sign-out successful.");
+      })
+      .catch(function (error) {
+        // An error happened.
+      });
+  };
   return (
     <div className="chat">
       <div className="chat_header">
@@ -48,14 +64,14 @@ function Chat({ ChatRoomId }) {
             <AttachFileIcon />
           </IconButton>
           <IconButton>
-            <MoreVertIcon />
+            <MoreVertIcon onClick={(e) => SignOut()} />
           </IconButton>
         </div>
       </div>
       <div className="chat_body">
         <p className={`chat_message ${true && "chat_receiver"}`}>
           <span className="chat_name">Saadee</span>
-          Hello Rabbit
+          Hello
           <span className="chat_timeStamp">6:05pm</span>
         </p>
       </div>
@@ -86,6 +102,7 @@ function Chat({ ChatRoomId }) {
 }
 const mapStateToProps = (state) => ({
   ChatRoomId: state.Chat.roomId,
+  user:state.Chat.user
 });
 
-export default connect(mapStateToProps)(Chat);
+export default connect(mapStateToProps, { logOut })(Chat);

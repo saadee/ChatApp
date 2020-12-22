@@ -7,8 +7,9 @@ import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined";
 import "./Sidebar.css";
 import SideBarChat from "./SideBarChat/SideBarChat";
 import db from "../firebase";
+import { connect } from "react-redux";
 
-function SideBar() {
+function SideBar({user}) {
   const [rooms, setrooms] = useState([]);
   useEffect(() => {
     const unSubcribe = db.collection("rooms").onSnapshot((snapshot) =>
@@ -60,5 +61,10 @@ function SideBar() {
     </div>
   );
 }
+const mapStateToProps = (state) => ({
+  ChatRoomId: state.Chat.roomId,
+  user:state.Chat.user
+});
 
-export default SideBar;
+
+export default connect(mapStateToProps,)(SideBar) ;
