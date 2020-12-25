@@ -13,13 +13,15 @@ export default function (state = initialState, action) {
         roomId: payload,
       };
     case "SET_USER":
-      // console.log(payload);
+      localStorage.setItem('user', payload.user)
+      // console.log(payload.user.photoURL,'----------------------------------');
       return {
         ...state,
-        user: payload,
+        user: payload.user,
       };
     case "SIGN_OUT":
       // console.log(payload);
+      localStorage.removeItem('user')
       return {
         ...state,
         user: null,

@@ -9,17 +9,20 @@ import SideBarChat from "./SideBarChat/SideBarChat";
 import db from "../firebase";
 import { connect } from "react-redux";
 
-function SideBar({user}) {
+function SideBar({ user }) {
   const [rooms, setrooms] = useState([]);
   useEffect(() => {
-    const unSubcribe = db.collection("rooms").onSnapshot((snapshot) =>
-      setrooms(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          data: doc.data(),
-        }))
-      )
-    );
+    const unSubcribe = db
+      .collection("rooms")
+      .orderBy("name", "desc")
+      .onSnapshot((snapshot) =>
+        setrooms(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        )
+      );
     return () => {
       unSubcribe();
     };
@@ -27,7 +30,7 @@ function SideBar({user}) {
   return (
     <div className="sideBar">
       <div className="sideBar_header">
-        <Avatar />
+        <Avatar src={user?.photoURL} />
         <div className="sidebar_headerRight">
           <IconButton>
             <DonutLargeIcon />
@@ -50,12 +53,7 @@ function SideBar({user}) {
       <div className="sideBar_chats">
         <SideBarChat addNewChat />
         {rooms.map((room) => (
-          <SideBarChat
-            key={room.id}
-            id={room.id}
-            name={room.data.name}
-           
-          />
+          <SideBarChat key={room.id} id={room.id} name={room.data.name} />
         ))}
       </div>
     </div>
@@ -63,8 +61,7 @@ function SideBar({user}) {
 }
 const mapStateToProps = (state) => ({
   ChatRoomId: state.Chat.roomId,
-  user:state.Chat.user
+  user: state.Chat.user,
 });
 
-
-export default connect(mapStateToProps,)(SideBar) ;
+export default connect(mapStateToProps)(SideBar);

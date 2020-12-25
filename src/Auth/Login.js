@@ -15,7 +15,7 @@ function Login({ setUser }) {
         // The signed-in user info.
         var user = result.user;
         setUser(result)
-        console.log(result);
+        // console.log(result);
         // ...
       })
       .catch(function (error) {

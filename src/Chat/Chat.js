@@ -10,11 +10,14 @@ import { connect } from "react-redux";
 import db from "../firebase";
 import { auth } from "../firebase";
 import { logOut } from "../_actions/chatActions";
+import firebase from "firebase";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-function Chat({ ChatRoomId, logOut ,user}) {
+function Chat({ ChatRoomId, logOut, user }) {
   const [seed, setseed] = useState("");
   const [input, setinput] = useState("");
   const [Room, setRoom] = useState("");
+  const [messages, setmessages] = useState([]);
   useEffect(() => {
     setseed(Math.floor(Math.random() * 2000));
     // console.log(ChatRoomId);
@@ -24,13 +27,31 @@ function Chat({ ChatRoomId, logOut ,user}) {
       db.collection("rooms")
         .doc(ChatRoomId)
         .onSnapshot((snapshot) => setRoom(snapshot.data().name));
+
+      db.collection("rooms")
+        .doc(ChatRoomId)
+        .collection("messages")
+        .orderBy("timestamp", "asc")
+        .onSnapshot((snapshot) =>
+          setmessages(snapshot.docs.map((doc) => doc.data()))
+        );
     }
+
     return () => {};
   }, [ChatRoomId]);
   const sendMessage = (e) => {
     e.preventDefault();
+    // console.log("message : ", input);
+    // console.log("user : ", user.displayName);
+    // console.log("time : ", firebase.firestore.FieldValue.serverTimestamp());
+
+    db.collection("rooms").doc(ChatRoomId).collection("messages").add({
+      message: input,
+      name: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
     setinput("");
-    console.log(input);
+    // console.log(input);
   };
   const SignOut = () => {
     auth
@@ -46,6 +67,10 @@ function Chat({ ChatRoomId, logOut ,user}) {
         // An error happened.
       });
   };
+  let lastseen = new Date(
+    messages[messages.length - 1]?.timestamp?.toDate()
+  ).toDateString();
+  // console.log(lastseen);
   return (
     <div className="chat">
       <div className="chat_header">
@@ -54,7 +79,7 @@ function Chat({ ChatRoomId, logOut ,user}) {
         />
         <div className="chat_headerInfo">
           <h3>{Room}</h3>
-          <p>Last Seen...</p>
+          <p>Last Seen {lastseen ? lastseen : ""}</p>
         </div>
         <div className="chat_headerRight">
           <IconButton>
@@ -64,16 +89,27 @@ function Chat({ ChatRoomId, logOut ,user}) {
             <AttachFileIcon />
           </IconButton>
           <IconButton>
-            <MoreVertIcon onClick={(e) => SignOut()} />
+            <ExitToAppIcon onClick={(e) => SignOut()} />
           </IconButton>
         </div>
       </div>
       <div className="chat_body">
-        <p className={`chat_message ${true && "chat_receiver"}`}>
-          <span className="chat_name">Saadee</span>
-          Hello
-          <span className="chat_timeStamp">6:05pm</span>
-        </p>
+        {messages.map((message) => (
+          <p
+            className={`chat_message ${
+              message.name === user.displayName && "chat_receiver"
+            }`}
+          >
+            <span className="chat_name">
+              {message.name}
+              {/* {!message.name === user.displayName ? message.name : ""} */}
+            </span>
+            {message.message}
+            <span className="chat_timeStamp">
+              {new Date(message.timestamp?.toDate()).toDateString()}
+            </span>
+          </p>
+        ))}
       </div>
       <div className="chat_footer">
         <IconButton>
@@ -102,7 +138,7 @@ function Chat({ ChatRoomId, logOut ,user}) {
 }
 const mapStateToProps = (state) => ({
   ChatRoomId: state.Chat.roomId,
-  user:state.Chat.user
+  user: state.Chat.user,
 });
 
 export default connect(mapStateToProps, { logOut })(Chat);
