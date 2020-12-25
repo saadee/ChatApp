@@ -50,6 +50,7 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
+    padding-bottom: 10px;
     border-right: 1px solid lightgrey;
 }
 .sidebar_headerRight{

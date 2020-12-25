@@ -69,7 +69,7 @@ function Chat({ ChatRoomId, logOut, user }) {
   };
   let lastseen = new Date(
     messages[messages.length - 1]?.timestamp?.toDate()
-  ).toDateString();
+  ).toUTCString();
   // console.log(lastseen);
   return (
     <div className="chat">
@@ -106,7 +106,7 @@ function Chat({ ChatRoomId, logOut, user }) {
             </span>
             {message.message}
             <span className="chat_timeStamp">
-              {new Date(message.timestamp?.toDate()).toDateString()}
+              {new Date(message.timestamp?.toDate()).toUTCString()}
             </span>
           </p>
         ))}
