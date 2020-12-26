@@ -14,7 +14,7 @@ function SideBar({ user }) {
   useEffect(() => {
     const unSubcribe = db
       .collection("rooms")
-      .orderBy("name", "desc")
+      .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) =>
         setrooms(
           snapshot.docs.map((doc) => ({

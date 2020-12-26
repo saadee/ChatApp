@@ -4,6 +4,7 @@ import { Avatar } from "@material-ui/core";
 import db from "../../firebase";
 import { connect } from "react-redux";
 import { ChangeChat } from "../../_actions/chatActions";
+import firebase from "firebase";
 
 function SideBarChat({ addNewChat, name, ChatRoomId, id, ChangeChat }) {
   const [seed, setseed] = useState("");
@@ -27,6 +28,7 @@ function SideBarChat({ addNewChat, name, ChatRoomId, id, ChangeChat }) {
     if (roomName) {
       db.collection("rooms").add({
         name: roomName,
+        timestamp:firebase.firestore.FieldValue.serverTimestamp(),
       });
     }
   };
